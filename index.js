@@ -1,21 +1,29 @@
 
 // Importar las librerías necesarias
 const TelegramBot = require('node-telegram-bot-api');
-const OpenAI = require('openai');
+const { OpenAIApi, Configuration } = require('openai');
+require('dotenv').config()
+
+const openaiApiKey = process.env.OATOKEN;
+const botToken = process.env.BOTTOKEN;
+
+const configuration = new Configuration({
+  apiKey: openaiApiKey
+})
+
 
 // Configurar el bot de Telegram y la API de ChatGPT
-const botToken = process.env.BOTTOKEN;
-const openaiApiKey = process.env.OATOKEN;
 
 const bot = new TelegramBot(botToken, { polling: true });
-const openai = new OpenAI(openaiApiKey);
+const openai = new OpenAIApi(configuration);
+
 
 // Función para responder a los mensajes del usuario
 async function responderMensaje(mensaje) {
-  try {
+  try {    
     // Llamar a la API de ChatGPT para obtener la respuesta
-    const respuesta = await openai.complete({
-      engine: 'davinci',
+    const respuesta = await openai.createCompletion({
+      model: 'davinci',
       prompt: mensaje.text,
       maxTokens: 100,
       n: 1,
