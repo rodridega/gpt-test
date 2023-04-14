@@ -1,12 +1,12 @@
-Código hardcodeado:
 
 // Importar las librerías necesarias
 const TelegramBot = require('node-telegram-bot-api');
 const OpenAI = require('openai');
 
 // Configurar el bot de Telegram y la API de ChatGPT
-const botToken = 'INSERTA_AQUÍ_TU_TOKEN_DE_TELEGRAM';
-const openaiApiKey = 'INSERTA_AQUÍ_TU_API_KEY_DE_OPENAI';
+const botToken = process.env.BOTTOKEN;
+const openaiApiKey = process.env.OATOKEN;
+
 const bot = new TelegramBot(botToken, { polling: true });
 const openai = new OpenAI(openaiApiKey);
 
