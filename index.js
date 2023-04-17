@@ -17,24 +17,31 @@ const configuration = new Configuration({
 const bot = new TelegramBot(botToken, { polling: true });
 const openai = new OpenAIApi(configuration);
 
+const mensajesPrevios = []
 
 // Función para responder a los mensajes del usuario
 async function responderMensaje(mensaje) {
-  try {    
+
+  try {
     // Llamar a la API de ChatGPT para obtener la respuesta
-    const respuesta = await openai.createCompletion({
-      model: 'davinci',
-      prompt: mensaje.text,
-      maxTokens: 100,
-      n: 1,
-      stop: '\n',
-      temperature: 0.5,
+    const nuevoMsj = [{ role: "user", content: mensaje.text }]
+    mensajesPrevios.push(nuevoMsj[0])
+    const response = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: mensajesPrevios,
+      temperature: 0.9
     });
 
+    console.log(response.data.choices[0].message);
+
+
+    mensajesPrevios.push(response.data.choices[0].message)
+
     // Enviar la respuesta a través del bot de Telegram
-    bot.sendMessage(mensaje.chat.id, respuesta.data.choices[0].text);
+    bot.sendMessage(mensaje.chat.id, response.data.choices[0].message.content);
   } catch (error) {
-    console.log(error);
+    console.log(error.message)
+
   }
 }
 
